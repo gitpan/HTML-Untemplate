@@ -10,7 +10,7 @@ extends 'HTML::TreeBuilder';
 use HTML::Linear::Element;
 use HTML::Linear::Path;
 
-our $VERSION = '0.001'; # VERSION
+our $VERSION = '0.002'; # VERSION
 
 
 has _list       => (
@@ -128,7 +128,7 @@ HTML::Linear - represent HTML::Tree as a flat list
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 SYNOPSIS
 

@@ -6,7 +6,7 @@ use common::sense;
 use JSON::XS;
 use Any::Moose;
 
-our $VERSION = '0.001'; # VERSION
+our $VERSION = '0.002'; # VERSION
 
 
 has json        => (
@@ -24,6 +24,7 @@ has strict      => (is => 'ro', isa => 'Bool', default => 0);
 has tag         => (is => 'ro', isa => 'Str', required => 1);
 
 use overload '""' => \&as_string, fallback => 1;
+
 
 our %xpath_wrap = (
     array       => ['' => ''],
@@ -111,7 +112,7 @@ HTML::Linear::Path - represent paths inside HTML::Tree
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 SYNOPSIS
 
@@ -171,6 +172,25 @@ Quote attribute values for XPath representation.
 =head2 _wrap
 
 Help to make a fancy XPath.
+
+=head1 GLOBALS
+
+=head2 %HTML::Linear::Path::xpath_wrap
+
+Wrap XPath components to produce fancy syntax highlight.
+
+The format is:
+
+    (
+        array       => ['' => ''],
+        attribute   => ['' => ''],
+        equal       => ['' => ''],
+        number      => ['' => ''],
+        separator   => ['' => ''],
+        sigil       => ['' => ''],
+        tag         => ['' => ''],
+        value       => ['' => ''],
+    )
 
 =head1 AUTHOR
 

@@ -39,6 +39,7 @@ my %WriteMakefileArgs = (
     "HTML::TreeBuilder" => 0,
     "IO::Interactive" => 0,
     "JSON::XS" => 0,
+    "MouseX::NonMoose" => 0,
     "Pod::Usage" => 0,
     "Term::ANSIColor" => 0,
     "Tie::IxHash" => 0,
@@ -47,7 +48,7 @@ my %WriteMakefileArgs = (
     "overload" => 0,
     "strict" => 0
   },
-  "VERSION" => "0.001",
+  "VERSION" => "0.002",
   "test" => {
     "TESTS" => "t/*.t"
   }

@@ -2,7 +2,7 @@ NAME
     HTML::Untemplate - undo what the template engine does
 
 VERSION
-    version 0.001
+    version 0.002
 
 DESCRIPTION
     Despite being named similarly to HTML::Template, this distribution is
