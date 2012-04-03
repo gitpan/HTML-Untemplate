@@ -1,0 +1,710 @@
+# ABSTRACT: undo what the template engine does
+# PODNAME: HTML::Untemplate
+
+our $VERSION = '0.001'; # VERSION
+
+
+__END__
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+HTML::Untemplate - undo what the template engine does
+
+=head1 VERSION
+
+version 0.001
+
+=head1 DESCRIPTION
+
+Despite being named similarly to L<HTML::Template>, this distribution is not directly related to it.
+Instead, it attempts to reverse the templating action, whatever the template agent used.
+
+=head2 Why?
+
+Suppose you have a CMS.
+Typical CMS works roughly as this (data flows bottom-down):
+
+            RDBMS
+      scripting language
+             HTML
+         HTTP server
+            (...)
+          HTTP agent
+        layout engine
+            screen
+             user
+
+Consider the first 3 steps: C<RDBMS =E<gt> scripting language =E<gt> HTML>
+
+This is "applying template".
+
+Now, consider this: C<HTML =E<gt> scripting language =E<gt> RDBMS>
+
+I would call that "un-applying template", or "untemplate" C<:)>
+
+The practical application of this set of tools to assist in creation of web scrappers.
+
+=head2 CLI tools
+
+=head3 xpathify
+
+The L<xpathify> tool flatterns the HTML tree into key/value list:
+
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Hello HTML</title>
+        </head>
+        <body>
+            <h1>Hello World!</h1>
+            <p>This is a sample HTML</p>
+            Beware!
+            <p>HTML is <b>not</b> XML!</p>
+            Have a nice day.
+        </body>
+    </html>
+
+Becomes:
+
+=for html     <tt><font face='fixedsys, lucida console, terminal, vga, monospace'
+    style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>head</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>title</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>text()</span><span style=
+    'color: gray; background: black;'>&nbsp;Hello&nbsp;HTML&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>h1</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>text()</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;Hello&nbsp;World!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>1</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>text()</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;This&nbsp;is&nbsp;a&nbsp;sample&nbsp;HTML&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>text()</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Beware!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>2</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>text()</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;HTML&nbsp;is&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>2</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>b</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>text()</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;not&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>2</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>text()</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;XML!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>text()</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Have&nbsp;a&nbsp;nice&nbsp;day.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt>
+
+The keys are in XPath format, while the values are respective content from the HTML tree.
+Theoretically, it could be possible to reassemble the HTML tree from the flat key/value list this tool generates.
+
+=head3 untemplate
+
+The L<untemplate> tool flatterns a set of HTML documents using the algorithm from L<xpathify>.
+Then, it strips the shared key/value pairs.
+The "rest" is composed of original values fed into the template engine.
+
+And this is how the result actually looks like with some simple real-world examples
+(quotes L<1839|http://bash.org/?1839> and L<2486|http://bash.org/?2486> from L<bash.org|http://bash.org/>):
+
+=for html     <tt><font face='fixedsys, lucida console, terminal, vga, monospace'
+    style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>head</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>title</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>text()</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: darkgreen; background: black;'>bash_org_1839</span><span style='color: gray; background: black;'>&nbsp;&nbsp;&nbsp;QDB:&nbsp;Quote&nbsp;#1839&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: darkgreen; background: black;'>bash_org_2486</span><span style='color: gray; background: black;'>&nbsp;&nbsp;&nbsp;QDB:&nbsp;Quote&nbsp;#2486&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>form</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: magenta; background: black;'>@</span><span style=
+    'color: white; background: black;'>name</span><span style=
+    'color: yellow; background: black;'>=</span><span style=
+    'color: white; background: black;'>'tsearch'</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>center</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>table</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>1</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>tr</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>td</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>2</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>font</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>b</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>text()</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: darkgreen; background: black;'>bash_org_1839</span><span style='color: gray; background: black;'>&nbsp;&nbsp;&nbsp;Quote&nbsp;#1839&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: darkgreen; background: black;'>bash_org_2486</span><span style='color: gray; background: black;'>&nbsp;&nbsp;&nbsp;Quote&nbsp;#2486&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>center</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>1</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>table</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>tr</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>td</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>1</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: magenta; background: black;'>@</span><span style=
+    'color: white; background: black;'>class</span><span style=
+    'color: yellow; background: black;'>=</span><span style=
+    'color: white; background: black;'>'quote'</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>a</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: magenta; background: black;'>@</span><span style=
+    'color: white; background: black;'>href</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: darkgreen; background: black;'>bash_org_1839</span><span style='color: gray; background: black;'>&nbsp;&nbsp;&nbsp;?1839&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: darkgreen; background: black;'>bash_org_2486</span><span style='color: gray; background: black;'>&nbsp;&nbsp;&nbsp;?2486&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>center</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>1</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>table</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>tr</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>td</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>1</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: magenta; background: black;'>@</span><span style=
+    'color: white; background: black;'>class</span><span style=
+    'color: yellow; background: black;'>=</span><span style=
+    'color: white; background: black;'>'quote'</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>a</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>b</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>text()</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: darkgreen; background: black;'>bash_org_1839</span><span style='color: gray; background: black;'>&nbsp;&nbsp;&nbsp;#1839&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: darkgreen; background: black;'>bash_org_2486</span><span style='color: gray; background: black;'>&nbsp;&nbsp;&nbsp;#2486&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>center</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>1</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>table</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>tr</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>td</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>1</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: magenta; background: black;'>@</span><span style=
+    'color: white; background: black;'>class</span><span style=
+    'color: yellow; background: black;'>=</span><span style=
+    'color: white; background: black;'>'quote'</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>a</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: magenta; background: black;'>@</span><span style=
+    'color: white; background: black;'>class</span><span style=
+    'color: yellow; background: black;'>=</span><span style=
+    'color: white; background: black;'>'qa'</span><span style=
+    'color: cyan; background: black;'>][</span><span style=
+    'color: white; background: black;'>1</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: magenta; background: black;'>@</span><span style=
+    'color: white; background: black;'>href</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: darkgreen; background: black;'>bash_org_1839</span><span style='color: gray; background: black;'>&nbsp;&nbsp;&nbsp;./?le=cc8456a913b26eb7364e4e9a94348d04&amp;rox=1839&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: darkgreen; background: black;'>bash_org_2486</span><span style='color: gray; background: black;'>&nbsp;&nbsp;&nbsp;./?le=cc8456a913b26eb7364e4e9a94348d04&amp;rox=2486&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>center</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>1</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>table</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>tr</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>td</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>1</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: magenta; background: black;'>@</span><span style=
+    'color: white; background: black;'>class</span><span style=
+    'color: yellow; background: black;'>=</span><span style=
+    'color: white; background: black;'>'quote'</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>text()</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: darkgreen; background: black;'>bash_org_1839</span><span style='color: gray; background: black;'>&nbsp;&nbsp;&nbsp;(245)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: darkgreen; background: black;'>bash_org_2486</span><span style='color: gray; background: black;'>&nbsp;&nbsp;&nbsp;(230)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>center</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>1</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>table</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>tr</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>td</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>1</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: magenta; background: black;'>@</span><span style=
+    'color: white; background: black;'>class</span><span style=
+    'color: yellow; background: black;'>=</span><span style=
+    'color: white; background: black;'>'quote'</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>a</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: magenta; background: black;'>@</span><span style=
+    'color: white; background: black;'>class</span><span style=
+    'color: yellow; background: black;'>=</span><span style=
+    'color: white; background: black;'>'qa'</span><span style=
+    'color: cyan; background: black;'>][</span><span style=
+    'color: white; background: black;'>2</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: magenta; background: black;'>@</span><span style=
+    'color: white; background: black;'>href</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: darkgreen; background: black;'>bash_org_1839</span><span style='color: gray; background: black;'>&nbsp;&nbsp;&nbsp;./?le=cc8456a913b26eb7364e4e9a94348d04&amp;sox=1839&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: darkgreen; background: black;'>bash_org_2486</span><span style='color: gray; background: black;'>&nbsp;&nbsp;&nbsp;./?le=cc8456a913b26eb7364e4e9a94348d04&amp;sox=2486&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>center</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>1</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>table</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>tr</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>td</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>1</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: magenta; background: black;'>@</span><span style=
+    'color: white; background: black;'>class</span><span style=
+    'color: yellow; background: black;'>=</span><span style=
+    'color: white; background: black;'>'quote'</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>a</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: magenta; background: black;'>@</span><span style=
+    'color: white; background: black;'>class</span><span style=
+    'color: yellow; background: black;'>=</span><span style=
+    'color: white; background: black;'>'qa'</span><span style=
+    'color: cyan; background: black;'>][</span><span style=
+    'color: white; background: black;'>3</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: magenta; background: black;'>@</span><span style=
+    'color: white; background: black;'>href</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: darkgreen; background: black;'>bash_org_1839</span><span style='color: gray; background: black;'>&nbsp;&nbsp;&nbsp;./?le=cc8456a913b26eb7364e4e9a94348d04&amp;sux=1839&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: darkgreen; background: black;'>bash_org_2486</span><span style='color: gray; background: black;'>&nbsp;&nbsp;&nbsp;./?le=cc8456a913b26eb7364e4e9a94348d04&amp;sux=2486&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>center</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>1</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>table</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>tr</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>td</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>1</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: magenta; background: black;'>@</span><span style=
+    'color: white; background: black;'>class</span><span style=
+    'color: yellow; background: black;'>=</span><span style=
+    'color: white; background: black;'>'qt'</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>text()</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: darkgreen; background: black;'>bash_org_1839</span><span style='color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&lt;maff&gt;&nbsp;who&nbsp;needs&nbsp;showers&nbsp;when&nbsp;you've&nbsp;got&nbsp;an&nbsp;assortment&nbsp;of&nbsp;feminine&nbsp;products&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: darkgreen; background: black;'>bash_org_2486</span><span style='color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&lt;R`:#heroin&gt;&nbsp;Is&nbsp;this&nbsp;for&nbsp;recovery&nbsp;or&nbsp;indulgence?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>center</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>2</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>table</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>tr</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>2</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>td</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: magenta; background: black;'>@</span><span style=
+    'color: white; background: black;'>class</span><span style=
+    'color: yellow; background: black;'>=</span><span style=
+    'color: white; background: black;'>'footertext'</span><span style=
+    'color: cyan; background: black;'>][</span><span style=
+    'color: white; background: black;'>1</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>text()</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: darkgreen; background: black;'>bash_org_1839</span><span style='color: gray; background: black;'>&nbsp;&nbsp;&nbsp;8.3642&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: darkgreen; background: black;'>bash_org_2486</span><span style='color: gray; background: black;'>&nbsp;&nbsp;&nbsp;0.0016&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt>
+
+=head2 Modules
+
+May be used to serialize/flattern HTML documents:
+
+=over 4
+
+=item *
+
+L<HTML::Linear> - represent L<HTML::Tree> as a flat list
+
+=item *
+
+L<HTML::Linear::Element> - represent elements to populate L<HTML::Linear>
+
+=item *
+
+L<HTML::Linear::Path> - represent paths inside L<HTML::Tree>
+
+=back
+
+=head1 SEE ALSO
+
+=over 4
+
+=item *
+
+L<HTML::TreeBuilder>
+
+=item *
+
+L<HTML::Similarity>
+
+=item *
+
+L<XML::DifferenceMarkup>
+
+=back
+
+=head1 AUTHOR
+
+Stanislaw Pusep <stas@sysd.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2012 by Stanislaw Pusep.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+

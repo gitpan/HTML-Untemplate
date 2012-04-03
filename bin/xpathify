@@ -1,0 +1,114 @@
+#!/usr/bin/env perl
+# ABSTRACT: output HTML document as a flat XPath/content list
+# PODNAME: xpathify
+use strict;
+use common::sense;
+use open ':locale';
+
+use Getopt::Long;
+use HTML::Linear;
+use IO::Interactive qw(is_interactive);
+use Pod::Usage;
+use Term::ANSIColor qw(:constants);
+
+our $VERSION = '0.001'; # VERSION
+
+
+GetOptions(
+    q(help)     => \my $help,
+    q(color!)   => \my $color,
+    q(strict!)  => \my $strict,
+) or pod2usage(q(-verbose) => 1);
+pod2usage(q(-verbose) => 1)
+    if $help or $#ARGV != 0;
+
+$color //= is_interactive(*STDOUT);
+
+if ($color) {
+    # ugly in the morning
+    %HTML::Linear::Path::xpath_wrap = (
+        array       => [BOLD . CYAN,            RESET],
+        attribute   => [BOLD . BRIGHT_YELLOW,   RESET],
+        equal       => [BOLD . YELLOW,          RESET],
+        number      => [BOLD . BRIGHT_GREEN,    RESET],
+        separator   => [BOLD . RED,             RESET],
+        sigil       => [BOLD . MAGENTA,         RESET],
+        tag         => [BOLD . BRIGHT_BLUE,     RESET],
+        value       => [BOLD . BRIGHT_WHITE,    RESET],
+    );
+}
+
+my $hl = HTML::Linear->new;
+$hl->set_strict
+    if $strict;
+$hl->parse_file($ARGV[0])
+    or die "Can't parse $ARGV[0]: $!";
+
+for my $el ($hl->as_list) {
+    my $hash = $el->as_hash;
+    for (sort grep { not m{/\@(?:class|id)$} } keys %{$hash}) {
+        $hash->{$_} =~ s/\s+/ /gs;
+        say $_ . "\t" . $hash->{$_};
+    }
+}
+
+__END__
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+xpathify - output HTML document as a flat XPath/content list
+
+=head1 VERSION
+
+version 0.001
+
+=head1 SYNOPSIS
+
+    xpathify [options] HTML
+
+=head1 DESCRIPTION
+
+Represents a typical HTML document in a very verbose two-column mode.
+The first column is a XPath which locates each element inside the HTML tree.
+The second column is a respective content (if any).
+
+    /html/head/title/text() test 1
+    /html/body/h1/text()    test 2
+    /html/body/p[1]/text()  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+
+=head1 OPTIONS
+
+=over 4
+
+=item --help
+
+This.
+
+=item --[no]color
+
+Enable syntax highlight for XPath.
+By default, enabled automatically on interactive terminals.
+
+=item --[no]strict
+
+Strict mode disables grouping by C<id>, C<class> or C<name> attributes.
+The grouping is enabled by default.
+
+=back
+
+=head1 AUTHOR
+
+Stanislaw Pusep <stas@sysd.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2012 by Stanislaw Pusep.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+

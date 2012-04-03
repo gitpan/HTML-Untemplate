@@ -1,0 +1,94 @@
+NAME
+    HTML::Untemplate - undo what the template engine does
+
+VERSION
+    version 0.001
+
+DESCRIPTION
+    Despite being named similarly to HTML::Template, this distribution is
+    not directly related to it. Instead, it attempts to reverse the
+    templating action, whatever the template agent used.
+
+  Why?
+    Suppose you have a CMS. Typical CMS works roughly as this (data flows
+    bottom-down):
+
+                RDBMS
+          scripting language
+                 HTML
+             HTTP server
+                (...)
+              HTTP agent
+            layout engine
+                screen
+                 user
+
+    Consider the first 3 steps: "RDBMS => scripting language => HTML"
+
+    This is "applying template".
+
+    Now, consider this: "HTML => scripting language => RDBMS"
+
+    I would call that "un-applying template", or "untemplate" ":)"
+
+    The practical application of this set of tools to assist in creation of
+    web scrappers.
+
+  CLI tools
+   xpathify
+    The xpathify tool flatterns the HTML tree into key/value list:
+
+        <!DOCTYPE html>
+        <html>
+            <head>
+                <title>Hello HTML</title>
+            </head>
+            <body>
+                <h1>Hello World!</h1>
+                <p>This is a sample HTML</p>
+                Beware!
+                <p>HTML is <b>not</b> XML!</p>
+                Have a nice day.
+            </body>
+        </html>
+
+    Becomes:
+
+    The keys are in XPath format, while the values are respective content
+    from the HTML tree. Theoretically, it could be possible to reassemble
+    the HTML tree from the flat key/value list this tool generates.
+
+   untemplate
+    The untemplate tool flatterns a set of HTML documents using the
+    algorithm from xpathify. Then, it strips the shared key/value pairs. The
+    "rest" is composed of original values fed into the template engine.
+
+    And this is how the result actually looks like with some simple
+    real-world examples (quotes 1839 <http://bash.org/?1839> and 2486
+    <http://bash.org/?2486> from bash.org <http://bash.org/>):
+
+  Modules
+    May be used to serialize/flattern HTML documents:
+
+    *   HTML::Linear - represent HTML::Tree as a flat list
+
+    *   HTML::Linear::Element - represent elements to populate HTML::Linear
+
+    *   HTML::Linear::Path - represent paths inside HTML::Tree
+
+SEE ALSO
+    *   HTML::TreeBuilder
+
+    *   HTML::Similarity
+
+    *   XML::DifferenceMarkup
+
+AUTHOR
+    Stanislaw Pusep <stas@sysd.org>
+
+COPYRIGHT AND LICENSE
+    This software is copyright (c) 2012 by Stanislaw Pusep.
+
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as the Perl 5 programming language system itself.
+
