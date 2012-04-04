@@ -9,13 +9,12 @@ use ExtUtils::MakeMaker 6.30;
 
 
 my %WriteMakefileArgs = (
-  "ABSTRACT" => "undo what the template engine does",
+  "ABSTRACT" => "web scraping assistant",
   "AUTHOR" => "Stanislaw Pusep <stas\@sysd.org>",
   "BUILD_REQUIRES" => {
     "Data::Dumper" => 0,
     "English" => 0,
     "File::Find" => 0,
-    "File::Temp" => 0,
     "FindBin" => 0,
     "Path::Class" => 0,
     "Test::More" => 0,
@@ -35,10 +34,14 @@ my %WriteMakefileArgs = (
   "PREREQ_PM" => {
     "Any::Moose" => 0,
     "Digest::SHA" => 0,
+    "File::Basename" => 0,
+    "File::Temp" => 0,
     "Getopt::Long" => 0,
     "HTML::TreeBuilder" => 0,
     "IO::Interactive" => 0,
     "JSON::XS" => 0,
+    "Module::Load" => 0,
+    "MouseX::NativeTraits" => 0,
     "MouseX::NonMoose" => 0,
     "Pod::Usage" => 0,
     "Term::ANSIColor" => 0,
@@ -48,7 +51,7 @@ my %WriteMakefileArgs = (
     "overload" => 0,
     "strict" => 0
   },
-  "VERSION" => "0.002",
+  "VERSION" => "0.003",
   "test" => {
     "TESTS" => "t/*.t"
   }

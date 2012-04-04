@@ -8,7 +8,7 @@ use Any::Moose;
 
 use HTML::Linear::Path;
 
-our $VERSION = '0.002'; # VERSION
+our $VERSION = '0.003'; # VERSION
 
 
 has attributes  => (is => 'rw', isa => 'HashRef[Str]', default => sub { {} }, auto_deref => 1);
@@ -90,7 +90,7 @@ HTML::Linear::Element - represent elements to populate HTML::Linear
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 SYNOPSIS
 
