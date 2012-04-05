@@ -18,7 +18,6 @@ my %WriteMakefileArgs = (
     "FindBin" => 0,
     "Path::Class" => 0,
     "Test::More" => 0,
-    "Test::Requires" => 0,
     "warnings" => 0
   },
   "CONFIGURE_REQUIRES" => {
@@ -47,11 +46,12 @@ my %WriteMakefileArgs = (
     "Term::ANSIColor" => 0,
     "Tie::IxHash" => 0,
     "common::sense" => 0,
+    "feature" => 0,
     "open" => 0,
     "overload" => 0,
     "strict" => 0
   },
-  "VERSION" => "0.003",
+  "VERSION" => "0.004",
   "test" => {
     "TESTS" => "t/*.t"
   }

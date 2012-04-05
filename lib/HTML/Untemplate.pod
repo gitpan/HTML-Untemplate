@@ -1,7 +1,7 @@
 # ABSTRACT: web scraping assistant
 # PODNAME: HTML::Untemplate
 
-our $VERSION = '0.003'; # VERSION
+our $VERSION = '0.004'; # VERSION
 
 
 __END__
@@ -15,7 +15,7 @@ HTML::Untemplate - web scraping assistant
 
 =head1 VERSION
 
-version 0.003
+version 0.004
 
 =head1 DESCRIPTION
 

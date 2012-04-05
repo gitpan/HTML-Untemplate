@@ -3,6 +3,7 @@
 # PODNAME: untemplate
 use strict;
 use common::sense;
+use feature qw(say);
 use open ':locale';
 
 use File::Basename;
@@ -15,7 +16,7 @@ use Pod::Usage;
 use Term::ANSIColor qw(:constants);
 use Tie::IxHash;
 
-our $VERSION = '0.003'; # VERSION
+our $VERSION = '0.004'; # VERSION
 
 
 GetOptions(
@@ -136,7 +137,7 @@ untemplate - analyze several HTML documents based on the same template
 
 =head1 VERSION
 
-version 0.003
+version 0.004
 
 =head1 SYNOPSIS
 
@@ -176,7 +177,7 @@ The grouping is enabled by default.
 
 Trying to I<untemplate> HTML documents B<not> based on the same template, the results will be empty.
 
-Unfortunately, employing any kind of document identifier as part of element classe/id
+Unfortunately, employing any kind of document identifier as part of element class/id
 (common practice in L<WordPress|http://wordpress.org/> themes)
 is enough to constitute "not same template".
 
