@@ -43,7 +43,7 @@ my %WriteMakefileArgs = (
     "MouseX::NativeTraits" => 0,
     "MouseX::NonMoose" => 0,
     "Pod::Usage" => 0,
-    "Term::ANSIColor" => 0,
+    "Term::ANSIColor" => "3.0",
     "Tie::IxHash" => 0,
     "common::sense" => 0,
     "feature" => 0,
@@ -51,7 +51,7 @@ my %WriteMakefileArgs = (
     "overload" => 0,
     "strict" => 0
   },
-  "VERSION" => "0.004",
+  "VERSION" => "0.005",
   "test" => {
     "TESTS" => "t/*.t"
   }
