@@ -6,7 +6,7 @@ use common::sense;
 use JSON::XS;
 use Any::Moose;
 
-our $VERSION = '0.005'; # VERSION
+our $VERSION = '0.006'; # VERSION
 
 
 has json        => (
@@ -24,6 +24,30 @@ has strict      => (is => 'ro', isa => 'Bool', default => 0);
 has tag         => (is => 'ro', isa => 'Str', required => 1);
 
 use overload '""' => \&as_string, fallback => 1;
+
+
+our %tag_weight = (
+    title       => 15,
+    h1          => 10,
+    h2          => 9,
+    h3          => 8,
+    h4          => 7,
+    h5          => 6,
+    h6          => 5,
+    center      => 3,
+    strong      => 2,
+    b           => 2,
+    u           => 1,
+    em          => 1,
+    a           => 1,
+    sup         => -1,
+    sub         => -1,
+    samp        => -1,
+    pre         => -1,
+    kbd         => -1,
+    code        => -1,
+    blockquote  => -1,
+);
 
 
 our %xpath_wrap = (
@@ -76,6 +100,11 @@ sub as_xpath {
 }
 
 
+sub weight {
+    $tag_weight{$_[0]->tag} // 0;
+}
+
+
 sub _quote {
     local $_ = $_[0];
 
@@ -112,7 +141,7 @@ HTML::Linear::Path - represent paths inside HTML::Tree
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 SYNOPSIS
 
@@ -163,6 +192,10 @@ Build a quick & dirty string representation of a path the L<HTML::TreeBuilder> s
 
 Build a nice XPath representation of a path inside the L<HTML::TreeBuilder> structure.
 
+=head2 weight
+
+Return tag weight.
+
 =head1 FUNCTIONS
 
 =head2 _quote
@@ -174,6 +207,11 @@ Quote attribute values for XPath representation.
 Help to make a fancy XPath.
 
 =head1 GLOBALS
+
+=head2 %HTML::Linear::Path::tag_weight
+
+Table of HTML tag weights.
+Borrowed from L<TexNet32 - WWW filters|http://publish.uwo.ca/~craven/texnet32/wwwnet32.htm>.
 
 =head2 %HTML::Linear::Path::xpath_wrap
 

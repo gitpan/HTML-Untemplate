@@ -39,6 +39,7 @@ my %WriteMakefileArgs = (
     "HTML::TreeBuilder" => 0,
     "IO::Interactive" => 0,
     "JSON::XS" => 0,
+    "List::Util" => 0,
     "Module::Load" => 0,
     "MouseX::NativeTraits" => 0,
     "MouseX::NonMoose" => 0,
@@ -51,7 +52,7 @@ my %WriteMakefileArgs = (
     "overload" => 0,
     "strict" => 0
   },
-  "VERSION" => "0.005",
+  "VERSION" => "0.006",
   "test" => {
     "TESTS" => "t/*.t"
   }

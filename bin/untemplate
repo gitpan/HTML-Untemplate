@@ -16,7 +16,7 @@ use Pod::Usage;
 use Term::ANSIColor qw(:constants);
 use Tie::IxHash;
 
-our $VERSION = '0.005'; # VERSION
+our $VERSION = '0.006'; # VERSION
 
 
 GetOptions(
@@ -154,7 +154,7 @@ untemplate - analyze several HTML documents based on the same template
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 SYNOPSIS
 
@@ -208,6 +208,8 @@ Trying to I<untemplate> HTML documents B<not> based on the same template, the re
 Unfortunately, employing any kind of document identifier as part of element class/id
 (common practice in L<WordPress|http://wordpress.org/> themes)
 is enough to constitute "not same template".
+
+See the C<--unmangle> option for a work-around.
 
 =head1 AUTHOR
 

@@ -4,11 +4,12 @@ use strict;
 use common::sense;
 
 use Digest::SHA;
+use List::Util qw(sum);
 use Any::Moose;
 
 use HTML::Linear::Path;
 
-our $VERSION = '0.005'; # VERSION
+our $VERSION = '0.006'; # VERSION
 
 
 has attributes  => (is => 'rw', isa => 'HashRef[Str]', default => sub { {} }, auto_deref => 1);
@@ -74,6 +75,11 @@ sub as_hash {
     return $hash;
 }
 
+
+sub weight {
+    sum map +$_->weight, @{$_[0]->path};
+}
+
 no Any::Moose;
 __PACKAGE__->meta->make_immutable;
 
@@ -90,7 +96,7 @@ HTML::Linear::Element - represent elements to populate HTML::Linear
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 SYNOPSIS
 
@@ -149,6 +155,10 @@ Build a nice XPath representation of a path inside the L<HTML::TreeBuilder> stru
 =head2 as_hash
 
 Linearize element as an associative array (Perl hash).
+
+=head2 weight
+
+Return XPath weight.
 
 =for Pod::Coverage BUILD
 
