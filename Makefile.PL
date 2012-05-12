@@ -13,9 +13,9 @@ my %WriteMakefileArgs = (
   "AUTHOR" => "Stanislaw Pusep <stas\@sysd.org>",
   "BUILD_REQUIRES" => {
     "Data::Dumper" => 0,
-    "English" => 0,
     "File::Find" => 0,
     "FindBin" => 0,
+    "HTML::TreeBuilder::XPath" => 0,
     "Path::Class" => 0,
     "Test::More" => 0,
     "warnings" => 0
@@ -46,13 +46,12 @@ my %WriteMakefileArgs = (
     "Pod::Usage" => 0,
     "Term::ANSIColor" => "3.0",
     "Tie::IxHash" => 0,
-    "common::sense" => 0,
-    "feature" => 0,
+    "common::sense" => "3.5",
     "open" => 0,
     "overload" => 0,
     "strict" => 0
   },
-  "VERSION" => "0.006",
+  "VERSION" => "0.007",
   "test" => {
     "TESTS" => "t/*.t"
   }

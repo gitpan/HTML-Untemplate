@@ -6,7 +6,7 @@ use common::sense;
 use JSON::XS;
 use Any::Moose;
 
-our $VERSION = '0.006'; # VERSION
+our $VERSION = '0.007'; # VERSION
 
 
 has json        => (
@@ -19,11 +19,22 @@ has json        => (
 
 has address     => (is => 'rw', isa => 'Str', required => 1);
 has attributes  => (is => 'ro', isa => 'HashRef[Str]', required => 1, auto_deref => 1);
+has is_groupable=> (is => 'rw', isa => 'Bool', default => 0);
 has key         => (is => 'rw', isa => 'Str', default => '');
 has strict      => (is => 'ro', isa => 'Bool', default => 0);
 has tag         => (is => 'ro', isa => 'Str', required => 1);
 
 use overload '""' => \&as_string, fallback => 1;
+
+
+our %groupby = (
+    class       => [qw(*)],
+    id          => [qw(*)],
+    name        => [qw(input meta)],
+    'http-equiv'=> [qw(meta)],
+    property    => [qw(meta)],
+    rel         => [qw(link)],
+);
 
 
 our %tag_weight = (
@@ -77,26 +88,31 @@ sub as_string {
 
 
 sub as_xpath {
-    my ($self) = @_;
+    my ($self, $strict) = @_;
 
     my $xpath = _wrap(separator => '/') . _wrap(tag => $self->tag);
 
-    unless ($self->strict) {
-        for (qw(id class name)) {
-            if ($self->attributes->{$_}) {
-                $xpath .= _wrap(array       => '[');
-                $xpath .= _wrap(sigil       => '@');
-                $xpath .= _wrap(attribute   => $_);
-                $xpath .= _wrap(equal       => '=');
-                $xpath .= _wrap(value       => _quote($self->attributes->{$_}));
-                $xpath .= _wrap(array       => ']');
+    my $expr = '';
+    for my $attr (keys %groupby) {
+        if (_isgroup($self->tag, $attr) and $self->attributes->{$attr}) {
+            $expr .= _wrap(array        => '[');
+            $expr .= _wrap(sigil        => '@');
+            $expr .= _wrap(attribute    => $attr);
+            $expr .= _wrap(equal        => '=');
+            $expr .= _wrap(value        => _quote($self->attributes->{$attr}));
+            $expr .= _wrap(array        => ']');
 
-                last;
-            }
+            $self->is_groupable(1);
+
+            last;
         }
     }
 
-    return $xpath;
+    return $xpath . (
+        (not $self->strict and not $strict)
+            ? $expr
+            : ''
+    );
 }
 
 
@@ -125,6 +141,16 @@ sub _wrap {
         . $xpath_wrap{$_[0]}->[1];
 }
 
+
+sub _isgroup {
+    my ($tag, $attr) = @_;
+    1 and grep {
+        $_ eq '*'
+            or
+        $_ eq $tag
+    } @{$groupby{$attr} // []};
+}
+
 no Any::Moose;
 __PACKAGE__->meta->make_immutable;
 
@@ -141,7 +167,7 @@ HTML::Linear::Path - represent paths inside HTML::Tree
 
 =head1 VERSION
 
-version 0.006
+version 0.007
 
 =head1 SYNOPSIS
 
@@ -176,7 +202,7 @@ Stringified path representation.
 
 =head2 strict
 
-Strict mode disables grouping by C<id>, C<class> or C<name> attributes.
+Strict mode disables grouping by tags/attributes listed in L</%HTML::Linear::Path::groupby>.
 
 =head2 tag
 
@@ -206,7 +232,16 @@ Quote attribute values for XPath representation.
 
 Help to make a fancy XPath.
 
+=head2 _isgroup($tag, $attribute)
+
+Checks if C<$tag>/C<$attribute> tuple matches L</%HTML::Linear::Path::groupby>.
+
 =head1 GLOBALS
+
+=head2 %HTML::Linear::Path::groupby
+
+Tags/attributes significant as XPath filters.
+C<@class>/C<@id> are the most obvious; we also use C<meta/@property>, C<input/@name> and several others.
 
 =head2 %HTML::Linear::Path::tag_weight
 

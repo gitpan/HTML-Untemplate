@@ -16,8 +16,10 @@ perlcritic.rc
 t/00-compile.t
 t/00-load.t
 t/10-flattern.t
+t/20-xpath.t
 t/author-critic.t
 t/author-test-eol.t
+t/cpan.html
 t/release-cpan-changes.t
 t/release-dist-manifest.t
 t/release-distmeta.t
