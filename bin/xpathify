@@ -3,6 +3,7 @@
 # PODNAME: xpathify
 use strict;
 use common::sense;
+use feature 'say';
 use open ':locale';
 
 use Getopt::Long;
@@ -11,7 +12,7 @@ use IO::Interactive qw(is_interactive);
 use Pod::Usage;
 use Term::ANSIColor qw(:constants);
 
-our $VERSION = '0.007'; # VERSION
+our $VERSION = '0.008'; # VERSION
 
 
 GetOptions(
@@ -74,7 +75,7 @@ xpathify - output HTML document as a flat XPath/content list
 
 =head1 VERSION
 
-version 0.007
+version 0.008
 
 =head1 SYNOPSIS
 

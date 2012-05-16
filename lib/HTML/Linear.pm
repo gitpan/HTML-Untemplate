@@ -12,7 +12,7 @@ extends 'HTML::TreeBuilder';
 use HTML::Linear::Element;
 use HTML::Linear::Path;
 
-our $VERSION = '0.007'; # VERSION
+our $VERSION = '0.008'; # VERSION
 
 
 has _list       => (
@@ -148,7 +148,7 @@ sub deparse {
     }
 
     while (my ($xpath, $address) = each %uniq) {
-        next if 2 > scalar @{$address};
+        next if not $self->_strict and 2 > scalar @{$address};
 
         my $i = 0;
         $self->_uniq->{$_} =
@@ -177,7 +177,7 @@ HTML::Linear - represent HTML::Tree as a flat list
 
 =head1 VERSION
 
-version 0.007
+version 0.008
 
 =head1 SYNOPSIS
 

@@ -8,6 +8,7 @@ build_requires:
   FindBin: 0
   HTML::TreeBuilder::XPath: 0
   Path::Class: 0
+  Set::CrossProduct: 0
   Test::More: 0
   warnings: 0
 configure_requires:
@@ -38,6 +39,7 @@ requires:
   Term::ANSIColor: 3.0
   Tie::IxHash: 0
   common::sense: 3.5
+  feature: 0
   open: 0
   overload: 0
   perl: 5.010
@@ -46,4 +48,4 @@ resources:
   bugtracker: https://github.com/creaktive/HTML-Untemplate/issues
   homepage: https://github.com/creaktive/HTML-Untemplate
   repository: git://github.com/creaktive/HTML-Untemplate.git
-version: 0.007
+version: 0.008
