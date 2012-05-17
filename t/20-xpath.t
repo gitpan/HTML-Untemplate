@@ -7,27 +7,31 @@ use Path::Class;
 use Test::More;
 
 use_ok(q(HTML::Linear));
+my $n = 1;
 
-my $file = q...file($Bin, q(cpan.html));
-
-my $xpath = HTML::TreeBuilder::XPath->new;
-isa_ok($xpath, q(HTML::TreeBuilder::XPath));
-can_ok($xpath, qw(parse_file findvalue));
-ok($xpath->parse_file($file), q(HTML::TreeBuilder::XPath::parse_file));
-
-my $n = 0;
 my $iterator = Set::CrossProduct->new([
+    [qw[test.html cpan.html perl.html]],
     [qw[set_strict unset_strict]],
     [qw[set_shrink unset_shrink]],
 ]);
 
 for my $tuple ($iterator->combinations) {
+    my $file = q...file($Bin, shift @{$tuple});
+
+    #next if $tuple->[0] eq q(unset_strict);
+    diag($file);
+
+    my $xpath = HTML::TreeBuilder::XPath->new;
+    isa_ok($xpath, q(HTML::TreeBuilder::XPath));
+    can_ok($xpath, qw(parse_file findvalue));
+    ok($xpath->parse_file($file), q(HTML::TreeBuilder::XPath::parse_file));
+    $n += 3;
+
     my $hl = HTML::Linear->new;
     for my $opt (@{$tuple}) {
         diag($opt . q(()));
         $hl->$opt();
     }
-    next if $tuple->[0] eq q(unset_strict);
 
     ok($hl->parse_file($file), q(HTML::Linear::parse_file));
     ++$n;
@@ -47,9 +51,11 @@ for my $tuple ($iterator->combinations) {
     for my $expr (keys %hash) {
         my $content = $hash{$expr};
         $content =~ s/^\s+|\s+$//gsx;
+        $content =~ s/\s+/ /gsx;
 
         my $value = $xpath->findvalue($expr);
         $value =~ s/^\s+|\s+$//gsx;
+        $value =~ s/\s+/ /gsx;
 
         ok(
             $value eq $content,
@@ -60,4 +66,4 @@ for my $tuple ($iterator->combinations) {
     }
 }
 
-done_testing(4 + $n);
+done_testing($n);

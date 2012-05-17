@@ -12,7 +12,7 @@ use IO::Interactive qw(is_interactive);
 use Pod::Usage;
 use Term::ANSIColor qw(:constants);
 
-our $VERSION = '0.008'; # VERSION
+our $VERSION = '0.009'; # VERSION
 
 
 GetOptions(
@@ -75,7 +75,7 @@ xpathify - output HTML document as a flat XPath/content list
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 SYNOPSIS
 

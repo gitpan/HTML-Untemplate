@@ -20,6 +20,7 @@ t/20-xpath.t
 t/author-critic.t
 t/author-test-eol.t
 t/cpan.html
+t/perl.html
 t/release-cpan-changes.t
 t/release-dist-manifest.t
 t/release-distmeta.t

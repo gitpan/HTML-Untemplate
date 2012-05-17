@@ -9,7 +9,7 @@ use Any::Moose;
 
 use HTML::Linear::Path;
 
-our $VERSION = '0.008'; # VERSION
+our $VERSION = '0.009'; # VERSION
 
 
 has attributes  => (is => 'rw', isa => 'HashRef[Str]', default => sub { {} }, auto_deref => 1);
@@ -47,11 +47,7 @@ sub as_string {
 sub as_xpath {
     my ($self) = @_;
     my @xpath = map {
-        $_->as_xpath . (
-            (not $self->strict and $_->is_groupable)
-                ? ''
-                : $self->index_map->{$_->address} // ''
-            )
+        $_->as_xpath . ($self->index_map->{$_->address} // '')
     } ($self->path) [$self->trim_at .. $#{$self->path}];
     $self->trim_at and unshift @xpath, HTML::Linear::Path::_wrap(separator => '/');
     return wantarray
@@ -110,7 +106,7 @@ HTML::Linear::Element - represent elements to populate HTML::Linear
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 SYNOPSIS
 
