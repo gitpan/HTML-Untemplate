@@ -4,6 +4,9 @@
 use strict;
 use common::sense;
 use feature 'say';
+
+# workaround for the crappy Windows 'Cannot figure out an encoding to use' error
+$ENV{LANG} = 'en_US.UTF-8' if $^O =~ /^win/i;
 use open ':locale';
 
 use Getopt::Long;
@@ -12,15 +15,16 @@ use IO::Interactive qw(is_interactive);
 use Pod::Usage;
 use Term::ANSIColor qw(:constants);
 
-our $VERSION = '0.009'; # VERSION
+our $VERSION = '0.010'; # VERSION
 
 
 GetOptions(
-    q(help)     => \my $help,
-    q(color!)   => \my $color,
-    q(shrink!)  => \my $shrink,
-    q(strict!)  => \my $strict,
-    q(weight!)  => \my $weight,
+    q(help)         => \my $help,
+    q(color!)       => \my $color,
+    q(encoding=s)   => \my $encoding,
+    q(shrink!)      => \my $shrink,
+    q(strict!)      => \my $strict,
+    q(weight!)      => \my $weight,
 ) or pod2usage(q(-verbose) => 1);
 pod2usage(q(-verbose) => 1)
     if $help or $#ARGV != 0;
@@ -45,13 +49,16 @@ if ($color) {
 my $hl = HTML::Linear->new;
 
 $hl->set_shrink
-    if $shrink // 0;
+    if $shrink // 1;
 
 $hl->set_strict
     if $strict // 0;
 
-$hl->parse_file($ARGV[0])
+open(my $fh, '<:' . ($encoding ? "encoding($encoding)" : 'locale' ), $ARGV[0])
+    or die "Can't open $ARGV[0]: $!";
+$hl->parse_file($fh)
     or die "Can't parse $ARGV[0]: $!";
+close $fh;
 
 for my $el ($hl->as_list) {
     my $hash = $el->as_hash;
@@ -75,7 +82,7 @@ xpathify - output HTML document as a flat XPath/content list
 
 =head1 VERSION
 
-version 0.009
+version 0.010
 
 =head1 SYNOPSIS
 
@@ -99,6 +106,11 @@ The second column is a respective content (if any).
 
 This.
 
+=item --encoding=name
+
+Specify the HTML document encoding (C<latin1>, C<utf8>).
+System locale is assumed by default.
+
 =item --[no]color
 
 Enable syntax highlight for XPath.
@@ -114,6 +126,8 @@ For example:
 Could be shortened as:
 
     //input[@name='query']
+
+The shrinking is enabled by default.
 
 =item --[no]strict
 
