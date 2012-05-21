@@ -1,21 +1,173 @@
-Changelog for HTML::Untemplate (full version at https://github.com/creaktive/HTML-Untemplate)
+Changelog for HTML-Untemplate
 
-0.010     2012-05-18
+0.011 2012-05-21T15:21:16
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - common::sense removed
 
-0.009     2012-05-17
+ - untemplate: minor enhancements, partial template mode
 
-0.008     2012-05-16
+ - using ChangelogFromGit::CPAN::Changes to track changes
 
-0.007     2012-05-12
+ - Changes
 
-0.006     2012-05-03
 
-0.005     2012-05-02
+v0.010 2012-05-18T19:49:00
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - better encoding handling
 
-0.004     2012-04-05
+ - 20-xpath.t broken into subtests
 
-0.003     2012-04-04
+ - Changes
 
-0.002     2012-04-03
 
-0.001     2012-04-03
+v0.009 2012-05-17T19:16:14
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - finally all test pass[2]
+
+ - finally all test pass
+
+ - minor reorder
+
+ - XPath-roundtrip test multiple HTML files
+
+ - XPath index threshold fix
+
+ - Changes
+
+
+v0.008 2012-05-16T19:52:31
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - Changes
+
+
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - strict mode even stricter; fixes
+
+
+v0.007 2012-05-12T13:12:45
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - perl 5.16.0 RC0 compatibility (common::sense >= 3.5 required)
+
+
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - XPath test
+
+ - XPath shrinker fix
+
+ - XPath shrinking options in untemplate/xpathify
+
+ - XPath shrinking!
+
+ - indexed elements (/p[2]) optimizations & bugfixes
+
+ - HTML::Linear::Element::as_xpath scalar/list context
+
+ - detailed strict grouping
+
+ - Changes
+
+
+v0.006 2012-05-03T19:32:06
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - tag weight metrics
+
+ - Changes
+
+
+v0.005 2012-05-02T19:18:06
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - Term::ANSIColor >= 3.0
+
+
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - untemplate --unmangle regex
+
+ - Changelog
+
+
+v0.004 2012-04-05T15:25:54
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - fix for perl-5.15.9
+
+ - typo fix
+
+
+v0.003 2012-04-04T18:33:28
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - (optional) YADA integration
+
+ - minor fixes
+
+ - Changelog
+
+
+v0.002 2012-04-03T21:15:30
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - minor adjustments
+
+
+v0.001 2012-04-03T15:58:13
+ [Stanislaw Pusep <stanislav.poussep@buscape-inc.com>]
+ - untemplate: preserve order
+
+
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - more documentation
+
+ - fancy HTML example for untemplate
+
+ - HTML example shrink
+
+ - fancy HTML example
+
+ - switch to Any::Moose
+
+ - colorize xpathify
+
+ - main_module=POD
+
+ - some documentation
+
+ - DISTZILLIFIED!!!
+
+
+ [Stanislaw Pusep <stas@jacotei.com.br>]
+ - COLORS!
+
+ - Data::NestedSet cleanup
+
+ - Data::NestedSet cleanup
+
+ - ++markup
+
+ - split xpathify/untemplate
+
+ - split xpathify/untemplate
+
+ - split xpathify/untemplate
+
+ - @id *OR* @class; as_hash method
+
+ - xpath indexes
+
+ - handle multiline.
+
+ - attribute filters
+
+ - tab
+
+ - XPath-ify
+
+ - cleanup
+
+ - as_xpath form added.
+
+ - HTML::Linear: OOP accessors.
+
+ - test.html reindent.
+
+ - HTML::Linear::Element contains/within methods.
+
+ - INIT
+
+

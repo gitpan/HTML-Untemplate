@@ -1,12 +1,13 @@
 package HTML::Linear::Path;
 # ABSTRACT: represent paths inside HTML::Tree
 use strict;
-use common::sense;
+use utf8;
+use warnings qw(all);
 
 use JSON::XS;
 use Any::Moose;
 
-our $VERSION = '0.010'; # VERSION
+our $VERSION = '0.011'; # VERSION
 
 
 has json        => (
@@ -167,7 +168,7 @@ HTML::Linear::Path - represent paths inside HTML::Tree
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 

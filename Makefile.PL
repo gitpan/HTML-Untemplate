@@ -18,8 +18,7 @@ my %WriteMakefileArgs = (
     "HTML::TreeBuilder::XPath" => 0,
     "Path::Class" => 0,
     "Set::CrossProduct" => 0,
-    "Test::More" => 0,
-    "warnings" => 0
+    "Test::More" => 0
   },
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => "6.30"
@@ -47,13 +46,14 @@ my %WriteMakefileArgs = (
     "Pod::Usage" => 0,
     "Term::ANSIColor" => "3.0",
     "Tie::IxHash" => 0,
-    "common::sense" => "3.5",
     "feature" => 0,
     "open" => 0,
     "overload" => 0,
-    "strict" => 0
+    "strict" => 0,
+    "utf8" => 0,
+    "warnings" => 0
   },
-  "VERSION" => "0.010",
+  "VERSION" => "0.011",
   "test" => {
     "TESTS" => "t/*.t"
   }

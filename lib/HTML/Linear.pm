@@ -1,7 +1,8 @@
 package HTML::Linear;
 # ABSTRACT: represent HTML::Tree as a flat list
 use strict;
-use common::sense;
+use utf8;
+use warnings qw(all);
 
 use Digest::SHA qw(sha256);
 
@@ -12,7 +13,7 @@ extends 'HTML::TreeBuilder';
 use HTML::Linear::Element;
 use HTML::Linear::Path;
 
-our $VERSION = '0.010'; # VERSION
+our $VERSION = '0.011'; # VERSION
 
 
 has _list       => (
@@ -197,7 +198,7 @@ HTML::Linear - represent HTML::Tree as a flat list
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
