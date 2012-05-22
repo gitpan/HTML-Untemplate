@@ -19,8 +19,11 @@ t/00-compile.t
 t/00-load.t
 t/10-flattern.t
 t/20-xpath.t
+t/30-cli.t
 t/author-critic.t
 t/author-test-eol.t
+t/bash1839.html
+t/bash2486.html
 t/cpan.html
 t/perl.html
 t/release-cpan-changes.t

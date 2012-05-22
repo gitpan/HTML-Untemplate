@@ -18,7 +18,8 @@ my %WriteMakefileArgs = (
     "HTML::TreeBuilder::XPath" => 0,
     "Path::Class" => 0,
     "Set::CrossProduct" => 0,
-    "Test::More" => 0
+    "Test::More" => 0,
+    "Test::Script::Run" => 0
   },
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => "6.30"
@@ -54,7 +55,7 @@ my %WriteMakefileArgs = (
     "utf8" => 0,
     "warnings" => 0
   },
-  "VERSION" => "0.012",
+  "VERSION" => "0.013",
   "test" => {
     "TESTS" => "t/*.t"
   }

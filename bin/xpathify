@@ -13,7 +13,7 @@ use HTML::Linear;
 use IO::Interactive qw(is_interactive);
 use Pod::Usage;
 
-our $VERSION = '0.012'; # VERSION
+our $VERSION = '0.013'; # VERSION
 
 
 GetOptions(
@@ -92,7 +92,7 @@ xpathify - output HTML document as a flat XPath/content list
 
 =head1 VERSION
 
-version 0.012
+version 0.013
 
 =head1 SYNOPSIS
 

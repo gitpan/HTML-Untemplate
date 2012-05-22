@@ -7,7 +7,7 @@ use warnings qw(all);
 use HTML::Entities;
 use Term::ANSIColor qw(:constants);
 
-our $VERSION = '0.012'; # VERSION
+our $VERSION = '0.013'; # VERSION
 
 
 our %scheme = (
@@ -112,7 +112,7 @@ HTML::Linear::Path::Colors - color schemes to render HTML::Linear::Path
 
 =head1 VERSION
 
-version 0.012
+version 0.013
 
 =head1 SYNOPSIS
 
