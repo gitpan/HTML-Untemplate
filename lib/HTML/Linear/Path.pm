@@ -7,7 +7,9 @@ use warnings qw(all);
 use JSON::XS;
 use Any::Moose;
 
-our $VERSION = '0.011'; # VERSION
+use HTML::Linear::Path::Colors;
+
+our $VERSION = '0.012'; # VERSION
 
 
 has json        => (
@@ -62,16 +64,7 @@ our %tag_weight = (
 );
 
 
-our %xpath_wrap = (
-    array       => ['' => ''],
-    attribute   => ['' => ''],
-    equal       => ['' => ''],
-    number      => ['' => ''],
-    separator   => ['' => ''],
-    sigil       => ['' => ''],
-    tag         => ['' => ''],
-    value       => ['' => ''],
-);
+our (%xpath_wrap) = (%{$HTML::Linear::Path::Colors::scheme{default}});
 
 
 sub as_string {
@@ -168,7 +161,7 @@ HTML::Linear::Path - represent paths inside HTML::Tree
 
 =head1 VERSION
 
-version 0.011
+version 0.012
 
 =head1 SYNOPSIS
 
@@ -265,6 +258,8 @@ The format is:
         tag         => ['' => ''],
         value       => ['' => ''],
     )
+
+There are several pre-defined schemes at L<HTML::Linear::Path::Colors>.
 
 =head1 AUTHOR
 

@@ -27,6 +27,7 @@ requires:
   File::Basename: 0
   File::Temp: 0
   Getopt::Long: 0
+  HTML::Entities: 0
   HTML::TreeBuilder: 0
   IO::Interactive: 0
   JSON::XS: 0
@@ -48,4 +49,4 @@ resources:
   bugtracker: https://github.com/creaktive/HTML-Untemplate/issues
   homepage: https://github.com/creaktive/HTML-Untemplate
   repository: git://github.com/creaktive/HTML-Untemplate.git
-version: 0.011
+version: 0.012

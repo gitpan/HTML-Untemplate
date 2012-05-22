@@ -6,20 +6,20 @@ use utf8;
 use warnings qw(all);
 
 use feature 'say';
-use open ':locale';
+use open qw(:std :utf8);
 
 use Getopt::Long;
 use HTML::Linear;
 use IO::Interactive qw(is_interactive);
 use Pod::Usage;
-use Term::ANSIColor qw(:constants);
 
-our $VERSION = '0.011'; # VERSION
+our $VERSION = '0.012'; # VERSION
 
 
 GetOptions(
     q(help)         => \my $help,
     q(color!)       => \my $color,
+    q(html!)        => \my $html,
     q(encoding=s)   => \my $encoding,
     q(shrink!)      => \my $shrink,
     q(strict!)      => \my $strict,
@@ -31,18 +31,13 @@ pod2usage(q(-verbose) => 1)
 $color //= is_interactive(*STDOUT);
 $weight //= 0;
 
-if ($color) {
-    # ugly in the morning
-    %HTML::Linear::Path::xpath_wrap = (
-        array       => [BOLD . CYAN,            RESET],
-        attribute   => [BOLD . BRIGHT_YELLOW,   RESET],
-        equal       => [BOLD . YELLOW,          RESET],
-        number      => [BOLD . BRIGHT_GREEN,    RESET],
-        separator   => [BOLD . RED,             RESET],
-        sigil       => [BOLD . MAGENTA,         RESET],
-        tag         => [BOLD . BRIGHT_BLUE,     RESET],
-        value       => [BOLD . BRIGHT_WHITE,    RESET],
-    );
+if ($html) {
+    (%HTML::Linear::Path::xpath_wrap) = (%{$HTML::Linear::Path::Colors::scheme{html}});
+    $color = 0;
+    print $HTML::Linear::Path::Colors::html[0];
+} elsif ($color) {
+    (%HTML::Linear::Path::xpath_wrap) = (%{$HTML::Linear::Path::Colors::scheme{terminal}});
+    $html = 0;
 }
 
 my $hl = HTML::Linear->new;
@@ -53,7 +48,7 @@ $hl->set_shrink
 $hl->set_strict
     if $strict // 0;
 
-open(my $fh, '<:' . ($encoding ? "encoding($encoding)" : 'locale' ), $ARGV[0])
+open(my $fh, '<:' . ($encoding ? "encoding($encoding)" : 'utf8' ), $ARGV[0])
     or die "Can't open $ARGV[0]: $!";
 $hl->parse_file($fh)
     or die "Can't parse $ARGV[0]: $!";
@@ -62,13 +57,29 @@ close $fh;
 for my $el ($hl->as_list) {
     my $hash = $el->as_hash;
     for (sort keys %{$hash}) {
-        $hash->{$_} =~ s/\s+/ /gs;
-        my @line = $_;
+        my @line;
+        if ($html) {
+            push @line, HTML::Linear::Path::Colors::wrap_xpath($_);
+            $hash->{$_} = HTML::Linear::Path::Colors::wrap_content($hash->{$_}, 1);
+        } elsif ($color) {
+            push @line, $_;
+            $hash->{$_} = HTML::Linear::Path::Colors::wrap_content($hash->{$_});
+        } else {
+            push @line, $_;
+        }
+
         push @line, $el->weight if $weight;
         push @line, $hash->{$_};
-        say join("\t", @line);
+        if ($html) {
+            say '<tr><td>' . join('</td><td>', @line) . '</td></tr>';
+        } else {
+            say join("\t", @line);
+        }
     }
 }
+
+print $HTML::Linear::Path::Colors::html[1]
+    if $html;
 
 __END__
 =pod
@@ -81,7 +92,7 @@ xpathify - output HTML document as a flat XPath/content list
 
 =head1 VERSION
 
-version 0.011
+version 0.012
 
 =head1 SYNOPSIS
 
@@ -108,12 +119,16 @@ This.
 =item --encoding=name
 
 Specify the HTML document encoding (C<latin1>, C<utf8>).
-System locale is assumed by default.
+UTF-8 is assumed by default.
 
 =item --[no]color
 
 Enable syntax highlight for XPath.
 By default, enabled automatically on interactive terminals.
+
+=item --[no]html
+
+Disables the C<--color> option and highlights using HTML/CSS.
 
 =item --[no]shrink
 

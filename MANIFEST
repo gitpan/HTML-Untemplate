@@ -8,9 +8,11 @@ README
 bin/untemplate
 bin/xpathify
 dist.ini
+highlight.css
 lib/HTML/Linear.pm
 lib/HTML/Linear/Element.pm
 lib/HTML/Linear/Path.pm
+lib/HTML/Linear/Path/Colors.pm
 lib/HTML/Untemplate.pod
 perlcritic.rc
 t/00-compile.t

@@ -1,6 +1,15 @@
 Changelog for HTML-Untemplate
 
-0.011 2012-05-21T15:21:16
+0.012 2012-05-22T17:55:20
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - use the GitHub-hosted CSS
+
+ - output highlighted XPath as HTML
+
+ - :locale I/O layer broken on Perl v5.16; using UTF-8 as default
+
+
+v0.011 2012-05-21T15:20:55
  [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
  - common::sense removed
 
