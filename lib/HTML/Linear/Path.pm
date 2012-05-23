@@ -9,7 +9,7 @@ use Any::Moose;
 
 use HTML::Linear::Path::Colors;
 
-our $VERSION = '0.013'; # VERSION
+our $VERSION = '0.014'; # VERSION
 
 
 has json        => (
@@ -161,7 +161,7 @@ HTML::Linear::Path - represent paths inside HTML::Tree
 
 =head1 VERSION
 
-version 0.013
+version 0.014
 
 =head1 SYNOPSIS
 

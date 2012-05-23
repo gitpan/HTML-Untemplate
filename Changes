@@ -1,6 +1,11 @@
 Changelog for HTML-Untemplate
 
-0.013 2012-05-22T20:00:05
+0.014 2012-05-23T20:50:00
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - tests: 99.5% coverage
+
+
+v0.013 2012-05-22T19:48:33
  [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
  - test CLI scripts
 

@@ -10,7 +10,7 @@ use Any::Moose;
 
 use HTML::Linear::Path;
 
-our $VERSION = '0.013'; # VERSION
+our $VERSION = '0.014'; # VERSION
 
 
 has attributes  => (is => 'rw', isa => 'HashRef[Str]', default => sub { {} }, auto_deref => 1);
@@ -69,12 +69,8 @@ sub as_hash {
             . HTML::Linear::Path::_wrap(attribute   => $key)
         } = $self->attributes->{$key}
             if
-                $self->attributes->{$key} !~ m{^\s*$}s
-                and not (
-                    $self->strict
-                        ? 0
-                        : HTML::Linear::Path::_isgroup($self->path->[-1]->tag, $key)
-                );
+                $self->strict
+                or not HTML::Linear::Path::_isgroup($self->path->[-1]->tag, $key);
     }
 
     $hash->{
@@ -107,7 +103,7 @@ HTML::Linear::Element - represent elements to populate HTML::Linear
 
 =head1 VERSION
 
-version 0.013
+version 0.014
 
 =head1 SYNOPSIS
 

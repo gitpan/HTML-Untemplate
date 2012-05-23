@@ -13,7 +13,7 @@ use HTML::Linear;
 use IO::Interactive qw(is_interactive);
 use Pod::Usage;
 
-our $VERSION = '0.013'; # VERSION
+our $VERSION = '0.014'; # VERSION
 
 
 GetOptions(
@@ -50,8 +50,7 @@ $hl->set_strict
 
 open(my $fh, '<:' . ($encoding ? "encoding($encoding)" : 'utf8' ), $ARGV[0])
     or die "Can't open $ARGV[0]: $!";
-$hl->parse_file($fh)
-    or die "Can't parse $ARGV[0]: $!";
+$hl->parse_file($fh);
 close $fh;
 
 for my $el ($hl->as_list) {
@@ -92,7 +91,7 @@ xpathify - output HTML document as a flat XPath/content list
 
 =head1 VERSION
 
-version 0.013
+version 0.014
 
 =head1 SYNOPSIS
 
