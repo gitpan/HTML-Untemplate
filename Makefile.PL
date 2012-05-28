@@ -34,11 +34,13 @@ my %WriteMakefileArgs = (
   "PREREQ_PM" => {
     "Any::Moose" => 0,
     "Digest::SHA" => 0,
+    "Encode" => 0,
     "File::Basename" => 0,
     "File::Temp" => 0,
     "Getopt::Long" => 0,
     "HTML::Entities" => 0,
     "HTML::TreeBuilder" => 0,
+    "HTTP::Tiny" => 0,
     "IO::Interactive" => 0,
     "JSON::XS" => 0,
     "List::Util" => 0,
@@ -55,7 +57,7 @@ my %WriteMakefileArgs = (
     "utf8" => 0,
     "warnings" => 0
   },
-  "VERSION" => "0.014",
+  "VERSION" => "0.015",
   "test" => {
     "TESTS" => "t/*.t"
   }

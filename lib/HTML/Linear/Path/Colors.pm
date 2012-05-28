@@ -7,7 +7,7 @@ use warnings qw(all);
 use HTML::Entities;
 use Term::ANSIColor qw(:constants);
 
-our $VERSION = '0.014'; # VERSION
+our $VERSION = '0.015'; # VERSION
 
 
 our %scheme = (
@@ -51,6 +51,7 @@ our @html = (
 <title></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link rel="stylesheet" href="http://creaktive.github.com/HTML-Untemplate/highlight.css" type="text/css">
+<link rel="stylesheet" href="highlight.css" type="text/css">
 </head>
 <body>
 <table summary="">
@@ -112,7 +113,7 @@ HTML::Linear::Path::Colors - color schemes to render HTML::Linear::Path
 
 =head1 VERSION
 
-version 0.014
+version 0.015
 
 =head1 SYNOPSIS
 

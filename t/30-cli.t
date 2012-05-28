@@ -49,21 +49,20 @@ run_output_matches(
 );
 
 run_output_matches(
-    xpathify => [qw[--color t/hello.html]],
+    xpathify => [qw[--encoding=latin1 --color t/hello.html]],
     [qq(\\[1m\\[31m\/\\[0m\\[1m\\[94mhtml\\[0m\\[1m\\[31m\/\\[0m\\[1m\\[94mbody\\[0m\\[1m\\[36m\[\\[0m\\[1m\\[92m1\\[0m\\[1m\\[36m\]\\[0m\\[1m\\[31m\/\\[0m\\[1m\\[93mtext\(\)\\[0m\t\\[41m\ \\[0mHello\ World\!)],
     [],
     q(xpathify ANSI colorified output matches),
 );
 
 run_output_matches(
-    untemplate => [qw[--html --unmangle=DUMMY t/bash1839.html t/bash2486.html]],
+    untemplate => [qw[--encoding=latin1 --html --unmangle=DUMMY t/bash1839.html t/bash2486.html]],
     [map { chomp; $_ } <DATA>],
     [],
     q(untemplate output matches),
 );
 
 my $iterator = Set::CrossProduct->new([
-    [qw[--encoding=latin1 --encoding=utf8]],
     [qw[--color --nocolor --html]],
     [qw[--shrink --noshrink]],
     [qw[--strict --nostrict]],
@@ -83,6 +82,7 @@ for my $tuple ($iterator->combinations) {
                 q(<title></title>),
                 qr(<meta.*?>),
                 qr(<link.*?>),
+                qr(<link.*?>),
                 q(</head>),
                 q(<body>),
                 q(<table summary="">),
@@ -98,7 +98,6 @@ for my $tuple ($iterator->combinations) {
 }
 
 $iterator = Set::CrossProduct->new([
-    [qw[--encoding=latin1 --encoding=utf8]],
     [qw[--color --nocolor --html]],
     [qw[--partial --nopartial]],
     [qw[--shrink --noshrink]],
@@ -113,12 +112,23 @@ for my $tuple ($iterator->combinations) {
     ++$m;
 }
 
-if ($ENV{RELEASE_USE_YADA}) {
-    run_ok(
+if ($ENV{RELEASE_USE_DOWNLOADER}) {
+    run_script(
+        xpathify => [qw(http://bash.org/?1839)],
+        q(xpathify http://bash.org...),
+    );
+    run_script(
+        xpathify => [qw(--encoding=latin1 http://google.com.br)],
+        q(xpathify http://google.com.br...),
+    );
+    run_script(
+        xpathify => [qw(http://255.255.255.255)],
+        q(xpathify http://BAD_HOST),
+    );
+    run_script(
         untemplate => [qw(http://bash.org/?1839 http://bash.org/?2486 http://255.255.255.255/)],
         q(untemplate http://...),
     );
-    ++$m;
 }
 
 done_testing(5 + $m);
@@ -130,6 +140,7 @@ __DATA__
 <title></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link rel="stylesheet" href="http://creaktive.github.com/HTML-Untemplate/highlight.css" type="text/css">
+<link rel="stylesheet" href="highlight.css" type="text/css">
 </head>
 <body>
 <table summary="">

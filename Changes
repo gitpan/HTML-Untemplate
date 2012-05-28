@@ -1,6 +1,17 @@
 Changelog for HTML-Untemplate
 
-0.014 2012-05-23T20:50:00
+0.015 2012-05-28T21:31:43
+ [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
+ - xpathify input via pipe/URL
+
+ - include local CSS
+
+ - cited XML::XSH2 in docs
+
+ - faster CLI tests
+
+
+v0.014 2012-05-23T20:34:12
  [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
  - tests: 99.5% coverage
 
