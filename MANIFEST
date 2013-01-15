@@ -13,7 +13,7 @@ lib/HTML/Linear.pm
 lib/HTML/Linear/Element.pm
 lib/HTML/Linear/Path.pm
 lib/HTML/Linear/Path/Colors.pm
-lib/HTML/Untemplate.pod
+lib/HTML/Untemplate.pm
 perlcritic.rc
 t/00-compile.t
 t/00-load.t

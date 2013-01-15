@@ -7,7 +7,9 @@ use warnings qw(all);
 use HTML::Entities;
 use Term::ANSIColor qw(:constants);
 
-our $VERSION = '0.015'; # VERSION
+## no critic (ProhibitPackageVars)
+
+our $VERSION = '0.016'; # VERSION
 
 
 our %scheme = (
@@ -44,8 +46,8 @@ our %scheme = (
 );
 
 
-our @html = (
-    q(<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+our @html = (<<'BOILERPLATE_HTML_HEADER',
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html>
 <head>
 <title></title>
@@ -55,11 +57,12 @@ our @html = (
 </head>
 <body>
 <table summary="">
-), q(</table>
+BOILERPLATE_HTML_HEADER
+<<'BOILERPLATE_HTML_FOOTER');
+</table>
 </body>
 </html>
-),
-);
+BOILERPLATE_HTML_FOOTER
 
 
 sub wrap_xpath {
@@ -103,6 +106,7 @@ sub wrap_content {
 1;
 
 __END__
+
 =pod
 
 =encoding utf8
@@ -113,7 +117,7 @@ HTML::Linear::Path::Colors - color schemes to render HTML::Linear::Path
 
 =head1 VERSION
 
-version 0.015
+version 0.016
 
 =head1 SYNOPSIS
 
@@ -168,10 +172,9 @@ Stanislaw Pusep <stas@sysd.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Stanislaw Pusep.
+This software is copyright (c) 2013 by Stanislaw Pusep.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

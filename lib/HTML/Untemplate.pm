@@ -1,10 +1,21 @@
+package HTML::Untemplate;
 # ABSTRACT: web scraping assistant
 # PODNAME: HTML::Untemplate
 
-our $VERSION = '0.015'; # VERSION
+use strict;
+use utf8;
+use warnings qw(all);
 
+use Moo;
+extends 'HTML::Linear';
+
+our $VERSION = '0.016'; # VERSION
+
+
+1;
 
 __END__
+
 =pod
 
 =encoding utf8
@@ -15,7 +26,7 @@ HTML::Untemplate - web scraping assistant
 
 =head1 VERSION
 
-version 0.015
+version 0.016
 
 =head1 DESCRIPTION
 
@@ -225,6 +236,10 @@ L<XPath-Wrapper Induction for Data Extraction|http://www.coltech.vnu.edu.vn/~thu
 
 =item *
 
+L<Extracting Data from HTML Using TreeBuilder Node IDs|http://secondthought.org/notes/nodeIdProbabilities.html>
+
+=item *
+
 L<HTML::TreeBuilder>
 
 =item *
@@ -247,10 +262,9 @@ Stanislaw Pusep <stas@sysd.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Stanislaw Pusep.
+This software is copyright (c) 2013 by Stanislaw Pusep.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

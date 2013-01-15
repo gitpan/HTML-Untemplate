@@ -1,24 +1,25 @@
 #!/usr/bin/env perl
 # ABSTRACT: analyze several HTML documents based on the same template
 # PODNAME: untemplate
+use 5.010;
 use strict;
-use utf8;
+use utf8::all;
 use warnings qw(all);
 
-use feature 'say';
-use open qw(:std :utf8);
-
+use Carp qw(croak);
 use File::Basename;
 use File::Temp;
 use Getopt::Long;
 use HTML::Linear;
 use IO::Interactive qw(is_interactive);
-use Module::Load qw(load);
+use Class::Load qw(try_load_class);
 use Pod::Usage;
 use Term::ANSIColor qw(:constants);
 use Tie::IxHash;
 
-our $VERSION = '0.015'; # VERSION
+## no critic (ProhibitDeepNests, ProhibitPackageVars)
+
+our $VERSION = '0.016'; # VERSION
 
 
 GetOptions(
@@ -45,56 +46,116 @@ if ($html) {
     $html = 0;
 }
 
-eval { load('YADA') };
-fetch_documents() unless $@;
+try_load_class('YADA')
+    and fetch_documents();
 
 tie my %elem, 'Tie::IxHash';
-for my $file (@ARGV) {
-    my $hl = HTML::Linear->new;
-
-    $hl->set_shrink
-        if $shrink // 1;
-
-    $hl->set_strict
-        if $strict // 0;
-
-    open(my $fh, '<:' . ($encoding ? "encoding($encoding)" : 'utf8' ), $file)
-        or die "Can't open $file: $!";
-    $hl->parse_file($fh);
-    close $fh;
-
-    push @{$elem{$_}}, [ $_ => basename($file) ]
-        for $hl->as_list;
-}
+parse_files(\%elem);
 
 tie my %xpath, 'Tie::IxHash';
-while (my ($key, $list) = each %elem) {
-    for (@{$list}) {
-        my ($el, $file) = @{$_};
+build_xpath(\%elem, \%xpath);
 
-        if (@unmangle) {
-            for my $path (@{$el->path}) {
-                for my $attr (keys %{$path->attributes}) {
-                    next unless HTML::Linear::Path::_isgroup($el->path->[-1], $attr);
-                    for my $unmangle (@unmangle) {
-                        $path->attributes->{$attr} =~ s/$unmangle//;
+for my $xpath (keys %xpath) {
+    dump_diffs($xpath, \%xpath);
+}
+
+print $HTML::Linear::Path::Colors::html[1]
+    if $html;
+
+sub fetch_documents {
+    my (@local, @remote);
+    for (@ARGV) {
+        if (m{^https?://}x) {
+            push @remote, $_;
+        } else {
+            push @local, $_;
+        }
+    }
+    return unless @remote;
+
+    ## no critic (RequireLocalizedPunctuationVars)
+    @ARGV = @local;
+
+    my $q = YADA->new;
+    for (@remote) {
+        my $tmp = File::Temp->new(
+            SUFFIX      => '.html',
+            TEMPLATE    => 'doc-XXXX',
+            TMPDIR      => 1,
+        );
+        $q->append(sub {
+            YADA::Worker->new({
+                initial_url => $_,
+                on_init     => sub {
+                    $_[0]->setopt(writedata => $tmp);
+                },
+                on_finish   => sub {
+                    $tmp->flush;
+                    push @ARGV, $tmp unless $_[0]->has_error;
+                },
+            })
+        });
+    }
+    $q->wait;
+    return;
+}
+
+sub parse_files {
+    my ($elem) = @_;
+    for my $file (@ARGV) {
+        my $hl = HTML::Linear->new;
+
+        $hl->set_shrink
+            if $shrink // 1;
+
+        $hl->set_strict
+            if $strict // 0;
+
+        open(my $fh, '<:' . ($encoding ? "encoding($encoding)" : 'utf8' ), $file)
+            or croak "Can't open $file: $!";
+        $hl->parse_file($fh);
+        close $fh;
+
+        push @{$elem->{$_}}, [ $_ => basename($file) ]
+            for $hl->as_list;
+    }
+    return;
+}
+
+sub build_xpath {
+    my ($elem, $xpath) = @_;
+    while (my ($key, $list) = each %$elem) {
+        for (@{$list}) {
+            my ($el, $file) = @{$_};
+
+            if (@unmangle) {
+                for my $path (@{$el->path}) {
+                    for my $attr (keys %{$path->attributes}) {
+                        ## no critic (ProtectPrivateSubs)
+                        next unless HTML::Linear::Path::_isgroup($el->path->[-1], $attr);
+                        for my $unmangle (@unmangle) {
+                            $path->attributes->{$attr} =~ s/$unmangle//x;
+                        }
                     }
                 }
             }
-        }
 
-        my $hash = $el->as_hash;
-        ++$xpath{$_}->{$hash->{$_}}{$file}
-            for keys %{$hash};
+            my $hash = $el->as_hash;
+            ++$xpath->{$_}->{$hash->{$_}}{$file}
+                for keys %{$hash};
+        }
     }
+    return;
 }
 
-for my $xpath (keys %xpath) {
+sub dump_diffs {
+    my ($xpath, $xpath_ref) = @_;
+
     my %file;
     my $m = 0;
     my $n = 0;
-    for my $p (keys %{$xpath{$xpath}}) {
-        for my $q (keys %{$xpath{$xpath}->{$p}}) {
+    for my $p (keys %{$xpath_ref->{$xpath}}) {
+        for my $q (keys %{$xpath_ref->{$xpath}->{$p}}) {
             push @{$file{$q}}, $p;
             ++$m;
         }
@@ -108,7 +169,7 @@ for my $xpath (keys %xpath) {
         if
             not ($partial // 0)
             and scalar keys %file != scalar @ARGV;
-    next if $flag;
+    return if $flag;
 
     if (1 < scalar keys %file) {
         if ($html) {
@@ -141,48 +202,12 @@ for my $xpath (keys %xpath) {
             say '';
         }
     }
-}
 
-print $HTML::Linear::Path::Colors::html[1]
-    if $html;
-
-sub fetch_documents {
-    my (@local, @remote);
-    for (@ARGV) {
-        if (m{^https?://}) {
-            push @remote, $_;
-        } else {
-            push @local, $_;
-        }
-    }
-    return unless @remote;
-
-    @ARGV = @local;
-
-    my $q = YADA->new;
-    for (@remote) {
-        my $tmp = File::Temp->new(
-            SUFFIX      => '.html',
-            TEMPLATE    => 'doc-XXXX',
-            TMPDIR      => 1,
-        );
-        $q->append(sub {
-            YADA::Worker->new({
-                initial_url => $_,
-                on_init     => sub {
-                    $_[0]->setopt(writedata => $tmp);
-                },
-                on_finish   => sub {
-                    $tmp->flush;
-                    push @ARGV, $tmp unless $_[0]->has_error;
-                },
-            })
-        });
-    }
-    $q->wait;
+    return;
 }
 
 __END__
+
 =pod
 
 =encoding utf8
@@ -193,7 +218,7 @@ untemplate - analyze several HTML documents based on the same template
 
 =head1 VERSION
 
-version 0.015
+version 0.016
 
 =head1 SYNOPSIS
 
@@ -283,10 +308,9 @@ Stanislaw Pusep <stas@sysd.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Stanislaw Pusep.
+This software is copyright (c) 2013 by Stanislaw Pusep.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

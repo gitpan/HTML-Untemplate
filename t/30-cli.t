@@ -1,5 +1,6 @@
+#!perl
 use strict;
-use utf8;
+use utf8::all;
 use warnings qw(all);
 
 use Set::CrossProduct;

@@ -1,6 +1,17 @@
 Changelog for HTML-Untemplate
 
-0.015 2012-05-28T21:31:43
+0.016 2013-01-15T17:56:30
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - cleanup
+
+ - weird return fix
+
+ - Dist::Zilla profile update
+
+ - s/Any::Moose/Moo/g
+
+
+v0.015 2012-05-28T21:30:10
  [Stanislaw Pusep <stanislav.poussep@buscapecompany.com>]
  - xpathify input via pipe/URL
 

@@ -5,27 +5,30 @@ use utf8;
 use warnings qw(all);
 
 use JSON::XS;
-use Any::Moose;
+use Moo;
+use MooX::Types::MooseLike::Base qw(:all);
 
 use HTML::Linear::Path::Colors;
 
-our $VERSION = '0.015'; # VERSION
+## no critic (ProhibitPackageVars)
+
+our $VERSION = '0.016'; # VERSION
 
 
 has json        => (
     is          => 'ro',
-    isa         => 'JSON::XS',
+    isa         => InstanceOf['JSON::XS'],
     default     => sub { JSON::XS->new->ascii->canonical },
     lazy        => 1,
 );
 
 
-has address     => (is => 'rw', isa => 'Str', required => 1);
-has attributes  => (is => 'ro', isa => 'HashRef[Str]', required => 1, auto_deref => 1);
-has is_groupable=> (is => 'rw', isa => 'Bool', default => 0);
-has key         => (is => 'rw', isa => 'Str', default => '');
-has strict      => (is => 'ro', isa => 'Bool', default => 0);
-has tag         => (is => 'ro', isa => 'Str', required => 1);
+has address     => (is => 'rw', isa => Str, required => 1);
+has attributes  => (is => 'ro', isa => HashRef[Str], required => 1);
+has is_groupable=> (is => 'rw', isa => Bool, default => sub { 0 });
+has key         => (is => 'rw', isa => Str, default => sub { '' });
+has strict      => (is => 'ro', isa => Bool, default => sub { 0 });
+has tag         => (is => 'ro', isa => Str, required => 1);
 
 use overload '""' => \&as_string, fallback => 1;
 
@@ -111,46 +114,48 @@ sub as_xpath {
 
 
 sub weight {
-    $tag_weight{$_[0]->tag} // 0;
+    my ($self) = @_;
+    return $tag_weight{$self->tag} // 0;
 }
 
 
 sub _quote {
-    local $_ = $_[0];
+    local ($_) = @_;
 
-    s/\\/\\\\/gs;
-    s/'/\\'/gs;
-    s/\s+/ /gs;
-    s/^\s//s;
-    s/\s$//s;
+    s/\\/\\\\/gsx;
+    s/'/\\'/gsx;
+    s/\s+/ /gsx;
+    s/^\s//sx;
+    s/\s$//sx;
 
     return "'$_'";
 }
 
 
 sub _wrap {
+    my ($p, $q) = @_;
     return
-        $xpath_wrap{$_[0]}->[0]
-        . $_[1]
-        . $xpath_wrap{$_[0]}->[1];
+        $xpath_wrap{$p}->[0]
+        . $q
+        . $xpath_wrap{$p}->[1];
 }
 
 
 sub _isgroup {
     my ($tag, $attr) = @_;
-    1 and grep {
-        $_ eq '*'
-            or
-        $_ eq $tag
-    } @{$groupby{$attr} // []};
+    return (
+        1 and grep {
+            $_ eq '*'
+                or
+            $_ eq $tag
+        } @{$groupby{$attr} // []}
+    );
 }
-
-no Any::Moose;
-__PACKAGE__->meta->make_immutable;
 
 1;
 
 __END__
+
 =pod
 
 =encoding utf8
@@ -161,7 +166,7 @@ HTML::Linear::Path - represent paths inside HTML::Tree
 
 =head1 VERSION
 
-version 0.015
+version 0.016
 
 =head1 SYNOPSIS
 
@@ -267,10 +272,9 @@ Stanislaw Pusep <stas@sysd.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Stanislaw Pusep.
+This software is copyright (c) 2013 by Stanislaw Pusep.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-
