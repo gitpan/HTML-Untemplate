@@ -5,11 +5,11 @@ use utf8;
 use warnings qw(all);
 
 use HTML::Entities;
-use Term::ANSIColor qw(:constants);
+use Term::ANSIColor qw(:constants :constants256);
 
 ## no critic (ProhibitPackageVars)
 
-our $VERSION = '0.016'; # VERSION
+our $VERSION = '0.017'; # VERSION
 
 
 our %scheme = (
@@ -32,6 +32,16 @@ our %scheme = (
         sigil       => [BOLD . MAGENTA,         RESET],
         tag         => [BOLD . BRIGHT_BLUE,     RESET],
         value       => [BOLD . BRIGHT_WHITE,    RESET],
+    },
+    terminal256 => {
+        array       => [BOLD . RGB155,          RESET],
+        attribute   => [BOLD . RGB551,          RESET],
+        equal       => [BOLD . RGB110,          RESET],
+        number      => [BOLD . RGB151,          RESET],
+        separator   => [BOLD . RGB511,          RESET],
+        sigil       => [BOLD . RGB515,          RESET],
+        tag         => [BOLD . RGB115,          RESET],
+        value       => [BOLD . RGB555,          RESET],
     },
     html => {
         array       => [q(<span class="arr">) => q(</span>)],
@@ -117,7 +127,7 @@ HTML::Linear::Path::Colors - color schemes to render HTML::Linear::Path
 
 =head1 VERSION
 
-version 0.016
+version 0.017
 
 =head1 SYNOPSIS
 

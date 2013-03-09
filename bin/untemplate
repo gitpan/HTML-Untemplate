@@ -19,12 +19,13 @@ use Tie::IxHash;
 
 ## no critic (ProhibitDeepNests, ProhibitPackageVars)
 
-our $VERSION = '0.016'; # VERSION
+our $VERSION = '0.017'; # VERSION
 
 
 GetOptions(
     q(help)         => \my $help,
     q(color!)       => \my $color,
+    q(16)           => \my $sixteen,
     q(html!)        => \my $html,
     q(encoding=s)   => \my $encoding,
     q(partial!)     => \my $partial,
@@ -42,7 +43,7 @@ if ($html) {
     $color = 0;
     print $HTML::Linear::Path::Colors::html[0];
 } elsif ($color) {
-    (%HTML::Linear::Path::xpath_wrap) = (%{$HTML::Linear::Path::Colors::scheme{terminal}});
+    (%HTML::Linear::Path::xpath_wrap) = (%{$HTML::Linear::Path::Colors::scheme{($sixteen // 0) ? q(terminal) : q(terminal256)}});
     $html = 0;
 }
 
@@ -218,7 +219,7 @@ untemplate - analyze several HTML documents based on the same template
 
 =head1 VERSION
 
-version 0.016
+version 0.017
 
 =head1 SYNOPSIS
 
@@ -247,6 +248,11 @@ UTF-8 is assumed by default.
 
 Enable syntax highlight for XPath.
 By default, enabled automatically on interactive terminals.
+
+=item --16
+
+Use 16 system colors.
+By default, try to use 256-color ANSI palette.
 
 =item --[no]html
 

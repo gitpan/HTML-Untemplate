@@ -1,6 +1,19 @@
 Changelog for HTML-Untemplate
 
-0.016 2013-01-15T17:56:30
+0.017 2013-03-09T15:18:45
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - version bump
+
+ - test coverage for 16 colors
+
+ - handle 256 colors (looks better under the Solarized color scheme)
+
+ - prerequisites cleanup
+
+ - references updated
+
+
+v0.016 2013-01-15T17:54:00
  [Stanislaw Pusep <creaktive@gmail.com>]
  - cleanup
 

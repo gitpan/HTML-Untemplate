@@ -9,7 +9,7 @@ use warnings qw(all);
 use Moo;
 extends 'HTML::Linear';
 
-our $VERSION = '0.016'; # VERSION
+our $VERSION = '0.017'; # VERSION
 
 
 1;
@@ -26,7 +26,7 @@ HTML::Untemplate - web scraping assistant
 
 =head1 VERSION
 
-version 0.016
+version 0.017
 
 =head1 DESCRIPTION
 
@@ -222,7 +222,7 @@ L<HTML::Linear::Path> - represent paths inside L<HTML::Tree>
 
 =back
 
-=head1 SEE ALSO
+=head1 REFERENCES
 
 =over 4
 
@@ -240,11 +240,21 @@ L<Extracting Data from HTML Using TreeBuilder Node IDs|http://secondthought.org/
 
 =item *
 
-L<HTML::TreeBuilder>
+L<Web Scraping Made Simple with SiteScraper|http://sitescraper.googlecode.com/files/sitescraper.pdf>
+
+=back
+
+=head1 SEE ALSO
+
+=over 4
 
 =item *
 
 L<HTML::Similarity>
+
+=item *
+
+L<Template::Extract>
 
 =item *
 

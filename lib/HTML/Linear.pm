@@ -15,7 +15,7 @@ use HTML::Linear::Path;
 
 ## no critic (ProtectPrivateSubs, RequireFinalReturn)
 
-our $VERSION = '0.016'; # VERSION
+our $VERSION = '0.017'; # VERSION
 
 
 has _list       => (
@@ -191,7 +191,7 @@ HTML::Linear - represent HTML::Tree as a flat list
 
 =head1 VERSION
 
-version 0.016
+version 0.017
 
 =head1 SYNOPSIS
 

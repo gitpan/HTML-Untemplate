@@ -4,7 +4,7 @@ use strict;
 use utf8;
 use warnings qw(all);
 
-use JSON::XS;
+use JSON;
 use Moo;
 use MooX::Types::MooseLike::Base qw(:all);
 
@@ -12,13 +12,13 @@ use HTML::Linear::Path::Colors;
 
 ## no critic (ProhibitPackageVars)
 
-our $VERSION = '0.016'; # VERSION
+our $VERSION = '0.017'; # VERSION
 
 
 has json        => (
     is          => 'ro',
-    isa         => InstanceOf['JSON::XS'],
-    default     => sub { JSON::XS->new->ascii->canonical },
+    isa         => InstanceOf['JSON'],
+    default     => sub { JSON->new->ascii->canonical },
     lazy        => 1,
 );
 
@@ -166,7 +166,7 @@ HTML::Linear::Path - represent paths inside HTML::Tree
 
 =head1 VERSION
 
-version 0.016
+version 0.017
 
 =head1 SYNOPSIS
 
@@ -185,7 +185,7 @@ version 0.016
 
 =head2 json
 
-Lazy L<JSON::XS> instance.
+Lazy L<JSON> instance.
 
 =head2 address
 

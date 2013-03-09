@@ -3,18 +3,12 @@ abstract: 'web scraping assistant'
 author:
   - 'Stanislaw Pusep <stas@sysd.org>'
 build_requires:
-  Data::Dumper: 0
-  File::Find: 0
-  FindBin: 0
   HTML::TreeBuilder::XPath: 0
   Path::Class: 0
   Set::CrossProduct: 0
-  Test::More: 0
   Test::Script::Run: 0
-configure_requires:
-  ExtUtils::MakeMaker: 6.30
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 4.300028, CPAN::Meta::Converter version 2.120921'
+generated_by: 'Dist::Zilla version 4.300030, CPAN::Meta::Converter version 2.120921'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -23,32 +17,20 @@ name: HTML-Untemplate
 recommends:
   AnyEvent::Net::Curl::Queued: 0
 requires:
-  Carp: 0
   Class::Load: 0
-  Digest::SHA: 0
-  Encode: 0
-  File::Basename: 0
-  File::Temp: 0
-  Getopt::Long: 0
   HTML::Entities: 0
   HTML::TreeBuilder: 0
   HTTP::Tiny: 0
   IO::Interactive: 0
-  JSON::XS: 0
-  List::Util: 0
+  JSON: 0
   Moo: 0
   MooX::Types::MooseLike::Base: 0
-  Pod::Usage: 0
-  Term::ANSIColor: 3.0
+  Term::ANSIColor: 4.0
   Tie::IxHash: 0
-  overload: 0
   perl: 5.010
-  strict: 0
-  utf8: 0
   utf8::all: 0
-  warnings: 0
 resources:
   bugtracker: https://github.com/creaktive/HTML-Untemplate/issues
   homepage: https://github.com/creaktive/HTML-Untemplate
   repository: git://github.com/creaktive/HTML-Untemplate.git
-version: 0.016
+version: 0.017

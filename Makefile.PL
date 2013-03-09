@@ -12,18 +12,12 @@ my %WriteMakefileArgs = (
   "ABSTRACT" => "web scraping assistant",
   "AUTHOR" => "Stanislaw Pusep <stas\@sysd.org>",
   "BUILD_REQUIRES" => {
-    "Data::Dumper" => 0,
-    "File::Find" => 0,
-    "FindBin" => 0,
     "HTML::TreeBuilder::XPath" => 0,
     "Path::Class" => 0,
     "Set::CrossProduct" => 0,
-    "Test::More" => 0,
     "Test::Script::Run" => 0
   },
-  "CONFIGURE_REQUIRES" => {
-    "ExtUtils::MakeMaker" => "6.30"
-  },
+  "CONFIGURE_REQUIRES" => {},
   "DISTNAME" => "HTML-Untemplate",
   "EXE_FILES" => [
     "bin/untemplate",
@@ -32,31 +26,19 @@ my %WriteMakefileArgs = (
   "LICENSE" => "perl",
   "NAME" => "HTML::Untemplate",
   "PREREQ_PM" => {
-    "Carp" => 0,
     "Class::Load" => 0,
-    "Digest::SHA" => 0,
-    "Encode" => 0,
-    "File::Basename" => 0,
-    "File::Temp" => 0,
-    "Getopt::Long" => 0,
     "HTML::Entities" => 0,
     "HTML::TreeBuilder" => 0,
     "HTTP::Tiny" => 0,
     "IO::Interactive" => 0,
-    "JSON::XS" => 0,
-    "List::Util" => 0,
+    "JSON" => 0,
     "Moo" => 0,
     "MooX::Types::MooseLike::Base" => 0,
-    "Pod::Usage" => 0,
-    "Term::ANSIColor" => "3.0",
+    "Term::ANSIColor" => "4.0",
     "Tie::IxHash" => 0,
-    "overload" => 0,
-    "strict" => 0,
-    "utf8" => 0,
-    "utf8::all" => 0,
-    "warnings" => 0
+    "utf8::all" => 0
   },
-  "VERSION" => "0.016",
+  "VERSION" => "0.017",
   "test" => {
     "TESTS" => "t/*.t"
   }

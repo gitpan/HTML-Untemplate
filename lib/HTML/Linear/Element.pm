@@ -13,7 +13,7 @@ use HTML::Linear::Path;
 
 ## no critic (ProtectPrivateSubs)
 
-our $VERSION = '0.016'; # VERSION
+our $VERSION = '0.017'; # VERSION
 
 
 has attributes  => (is => 'rw', isa => HashRef[Str], default => sub { {} });
@@ -106,7 +106,7 @@ HTML::Linear::Element - represent elements to populate HTML::Linear
 
 =head1 VERSION
 
-version 0.016
+version 0.017
 
 =head1 SYNOPSIS
 
