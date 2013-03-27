@@ -5,6 +5,7 @@ use utf8;
 use warnings qw(all);
 
 use Digest::SHA;
+use Encode;
 use List::Util qw(sum);
 use Moo;
 use MooX::Types::MooseLike::Base qw(:all);
@@ -13,7 +14,7 @@ use HTML::Linear::Path;
 
 ## no critic (ProtectPrivateSubs)
 
-our $VERSION = '0.017'; # VERSION
+our $VERSION = '0.018'; # VERSION
 
 
 has attributes  => (is => 'rw', isa => HashRef[Str], default => sub { {} });
@@ -41,7 +42,10 @@ sub as_string {
     my ($self) = @_;
     return $self->key if $self->key;
 
-    $self->sha->add($self->content);
+    my $content = $self->content;
+    Encode::_utf8_off($content);
+    $self->sha->add($content);
+
     $self->sha->add($self->index);
     $self->sha->add(join ',', $self->path);
 
@@ -106,7 +110,7 @@ HTML::Linear::Element - represent elements to populate HTML::Linear
 
 =head1 VERSION
 
-version 0.017
+version 0.018
 
 =head1 SYNOPSIS
 

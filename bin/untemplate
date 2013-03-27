@@ -19,7 +19,7 @@ use Tie::IxHash;
 
 ## no critic (ProhibitDeepNests, ProhibitPackageVars)
 
-our $VERSION = '0.017'; # VERSION
+our $VERSION = '0.018'; # VERSION
 
 
 GetOptions(
@@ -219,7 +219,7 @@ untemplate - analyze several HTML documents based on the same template
 
 =head1 VERSION
 
-version 0.017
+version 0.018
 
 =head1 SYNOPSIS
 

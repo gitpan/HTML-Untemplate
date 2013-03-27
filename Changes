@@ -1,6 +1,11 @@
 Changelog for HTML-Untemplate
 
-0.017 2013-03-09T15:18:45
+0.018 2013-03-27T23:27:47
+ [Stanislaw Pusep <creaktive@gmail.com>]
+ - fixed encoding issues revealed by upgrading to Digest::SHA v5.74
+
+
+v0.017 2013-03-09T15:09:31
  [Stanislaw Pusep <creaktive@gmail.com>]
  - version bump
 

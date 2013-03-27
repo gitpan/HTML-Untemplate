@@ -8,7 +8,7 @@ build_requires:
   Set::CrossProduct: 0
   Test::Script::Run: 0
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 4.300030, CPAN::Meta::Converter version 2.120921'
+generated_by: 'Dist::Zilla version 4.300031, CPAN::Meta::Converter version 2.120921'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -33,4 +33,4 @@ resources:
   bugtracker: https://github.com/creaktive/HTML-Untemplate/issues
   homepage: https://github.com/creaktive/HTML-Untemplate
   repository: git://github.com/creaktive/HTML-Untemplate.git
-version: 0.017
+version: 0.018
